@@ -15,33 +15,21 @@ class ValidateComponent extends React.Component {
     }
 }
 
-ValidateComponent.prototype.validate = function () {
+ValidateComponent.prototype.validate = function() {
     function childrenValidate(children) {
-        if (children) {
-            if ( Array.isArray(children)) {
-                children.map(child => {
-                    childValidate(child)
-                    return child
-                })
-            } else {
-                childValidate(children)
+        React.Children.map(children, (child, i)=>{
+            if (child.type === ValidateComponent) {
+                child.type.prototype.validate()
+            } else  {
+                childrenValidate(child.props.children)
             }
-        }
-    }
-
-    function childValidate(child) {
-        if (child.type.name === 'ValidateComponent') {
-            child.type.prototype.validate()
-        } else  {
-            childrenValidate(child.props?.children)
-        }
+        })
     }
 
     console.log('Вызов функции validate')
 
     childrenValidate(this.props?.children)
 }
-
 
 
 export default ValidateComponent;
